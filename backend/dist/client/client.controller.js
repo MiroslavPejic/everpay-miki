@@ -16,18 +16,37 @@ exports.ClientController = void 0;
 const common_1 = require("@nestjs/common");
 const client_service_1 = require("./client.service");
 const create_client_dto_1 = require("./dto/create-client.dto");
+const update_client_dto_1 = require("./dto/update-client.dto");
 let ClientController = class ClientController {
     constructor(clientService) {
         this.clientService = clientService;
     }
-    create(createClientDto) {
-        return this.clientService.create(createClientDto);
+    async create(createClientDto) {
+        try {
+            return await this.clientService.create(createClientDto);
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException(error.message);
+        }
     }
-    findAll() {
-        return this.clientService.findAll();
+    async findAll() {
+        return await this.clientService.findAll();
     }
-    findOne(id) {
-        return this.clientService.findOne(id);
+    async findOne(id) {
+        try {
+            return await this.clientService.findOne(id);
+        }
+        catch (error) {
+            throw new common_1.NotFoundException(error.message);
+        }
+    }
+    async update(id, updateClientDto) {
+        try {
+            return await this.clientService.update(id, updateClientDto);
+        }
+        catch (error) {
+            throw new common_1.InternalServerErrorException(error.message);
+        }
     }
 };
 exports.ClientController = ClientController;
@@ -51,6 +70,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ClientController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_client_dto_1.UpdateClientDto]),
+    __metadata("design:returntype", Promise)
+], ClientController.prototype, "update", null);
 exports.ClientController = ClientController = __decorate([
     (0, common_1.Controller)('clients'),
     __metadata("design:paramtypes", [client_service_1.ClientService])

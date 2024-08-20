@@ -59,6 +59,25 @@ let ClientService = class ClientService {
         }
         return data;
     }
+    async update(id, updateClientDto) {
+        try {
+            const { data, error } = await this.supabaseService.getClient()
+                .from('clients')
+                .update(updateClientDto)
+                .eq('id', id)
+                .single();
+            if (error) {
+                throw new common_1.InternalServerErrorException(`Error updating client: ${error.message}`);
+            }
+            if (!data) {
+                throw new common_1.NotFoundException(`Client with id ${id} not found.`);
+            }
+            return data;
+        }
+        catch (err) {
+            throw new common_1.InternalServerErrorException(`Unexpected error: ${err.message}`);
+        }
+    }
 };
 exports.ClientService = ClientService;
 exports.ClientService = ClientService = __decorate([

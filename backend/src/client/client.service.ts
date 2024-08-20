@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { CreateClientDto } from './dto/create-client.dto';
+import { UpdateClientDto } from './dto/update-client.dto'; // Import UpdateClientDto
 import { Client } from './client.entity';
 
 @Injectable()
@@ -59,5 +60,28 @@ export class ClientService {
     }
 
     return data as Client; // Type assertion
+  }
+
+  async update(id: string, updateClientDto: UpdateClientDto): Promise<Client> {
+    try {
+      // Update the client record
+      const { data, error } = await this.supabaseService.getClient()
+        .from('clients')
+        .update(updateClientDto)
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        throw new InternalServerErrorException(`Error updating client: ${error.message}`);
+      }
+
+      if (!data) {
+        throw new NotFoundException(`Client with id ${id} not found.`);
+      }
+
+      return data as Client; // Type assertion
+    } catch (err) {
+      throw new InternalServerErrorException(`Unexpected error: ${err.message}`);
+    }
   }
 }
